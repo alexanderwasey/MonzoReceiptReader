@@ -1,0 +1,72 @@
+try:
+	    conn.request("GET", "/vision/v2.0/textOperations/{operationId}?%s" % params, "{body}", headers)
+	    response2 = conn.getresponse()
+	    data2 = response2.read()
+	    print(data)
+	except Exception as e:
+    	print("[Errno {0}] {1}".format(e.errno, e.strerror))
+    	
+    	
+    	
+    	Pragma: no-cache
+Operation-Location: https://westcentralus.api.cognitive.microsoft.com/vision/v2.0/textOperations/6596dc75-0e31-4ca6-9237-3b339873f06d
+apim-request-id: 58c3110c-67b9-4c07-97d3-2e639ceebe56
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+x-content-type-options: nosniff
+Cache-Control: no-cache
+Date: Sat, 19 Jan 2019 18:41:11 GMT
+X-AspNet-Version: 4.0.30319
+X-Powered-By: ASP.NET
+Content-Length: 0
+Expires: -1
+
+
+    #print(json.dumps(response.getheaders()))
+    #params = urllib.parse.urlencode({response["Operation-Location"]})
+    
+        
+    #print(x)
+    #print(x.split("/")[-1]) 
+    
+    
+            #z = analysis = response.json()
+        
+        #x = response.getheader('Operation-Location')
+        #params = urllib.parse.urlencode({response["Operation-Location"]})
+        
+        
+        
+                #pp.pprint(z)
+        #pp.pprint(z["recognitionResult"]["lines"])
+        
+        
+        
+            	
+    	# Extract the word bounding boxes and text.
+        #line_infos = data2["lines"]
+        #word_infos = []
+        #print(line_infos)
+
+
+        #for line in line_infos:
+   	     #   for word_metadata in line:
+   	      #      for word_info in word_metadata["words"]:
+   	       #         word_infos.append(word_info)
+        #word_infos
+	
+        # open the output file for writing
+        #dataFile = open('scanned-chars.txt', 'w')
+
+        # loop through each item in the list
+        # and write it to the output file
+        #for eachitem in word_infos:
+         #   dataFile.write(str(eachitem["text"])+'\n')
+
+        # close the output file
+        #dataFile.close()
+        
+            
+    #parsed = urlparse.urlparse(url)
+    #print urlparse.parse_qs(parsed.query)['def']
+    
+            pp = pprint.PrettyPrinter(width=41, compact=True)

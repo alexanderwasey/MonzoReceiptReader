@@ -8,7 +8,7 @@ import requests
 import config
 import oauth2
 import receipt_types
-from monzotools import *
+import monzotools 
 from utils import error
 
 class ReceiptsClient:
@@ -89,91 +89,39 @@ class ReceiptsClient:
         print("Receipt read: {}".format(response))
 
     
-    def example_add_receipt_data(self):
-        ''' An example in which we add receipt data to the latest transaction 
-            of the account, with fabricated information. You can set varying 
-            receipts data on the same transaction again and again to test it 
-            if you need to. 
-        '''
-        if len(self.transactions) == 0:
-            error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
+    def add_receipt_data(self, transaction, receipt):
+        receipt_marshaled = receipt.marshal()
+        receipt_id = monzotools.genReceiptID(transaction)
 
-        printURLS(transactionsWithImages(self.transactions))
-
-
-        most_recent_matched_transaction = self.transactions[-1]
-
-        if (most_recent_matched_transaction is None):
-            error("No transaction found with matching price")
-
-        print("Using most recent transaction to attach receipt: {}".format(most_recent_matched_transaction))
-
-        # Using a random receipt ID we generate as external ID
-        receipt_id = uuid.uuid4().hex
-        
-        # Price amounts are in the number of pences.
-        example_sub_item_1 = receipt_types.SubItem("Bananas loose", 1.5, "kg", 119, "GBP", 0)
-        example_sub_item_2 = receipt_types.SubItem("Organic bananas", 1, "kg", 150, "GBP", 0)
-        example_items = [receipt_types.Item("Selected bananas", 2.5, "kg", 269, "GBP", 0, [example_sub_item_1,
-            example_sub_item_2])]
-        if abs(most_recent_matched_transaction["amount"]) > 269:
-            example_items.append(receipt_types.Item("Excess fare", 1, "", abs(most_recent_matched_transaction["amount"]) 
-            - 269, "GBP", 20, []))
-        example_payments = [receipt_types.Payment("card", "123321", "1234", "A10B2C", "", "", "", "", 
-            abs(most_recent_matched_transaction["amount"]), "GBP")]
-        example_taxes = [receipt_types.Tax("VAT", 0, "GBP", "12345678")]
-        
-        example_receipt = receipt_types.Receipt("", receipt_id, most_recent_matched_transaction["id"], 
-            abs(most_recent_matched_transaction["amount"]), "GBP", example_payments, example_taxes, example_items)
-        example_receipt_marshaled = example_receipt.marshal()
-        print("Uploading receipt data to API: ", json.dumps(example_receipt_marshaled, indent=4, sort_keys=True))
-        print("")
-        
-        success, response = self._api_client.api_put("transaction-receipts/", example_receipt_marshaled)
+        success, response = self._api_client.api_put("transaction-receipts/", receipt_marshaled)
         if not success:
             error("Failed to upload receipt: {}".format(response))
-
         print("Successfully uploaded receipt {}: {}".format(receipt_id, response))
-        return receipt_id
 
-    
-    def example_register_webhook(self, incoming_endpoint):
-        '''
-        This is an example on registering a webhook with Monzo for Monzo's server to call your own
-        backend service endpoint when certain events happen on an account. This is useful if you 
-        deploy an API client as a backend service with an incoming interface exposed to the internet.
-        Your backend code can then, for example, attach receipts to new transactions in an event-
-        driven manner. For more details, see https://docs.monzo.com/#webhooks
-        '''
+    #Need to update with proper data source, but once we can do that should be good
+    def add_data_image_receipts(self, transactions):
+        imgtransactions = monzotools.transactionsWithImages(transactions)
 
-        print("Listing webhooks on account")
-        success, response = self._api_client.api_get("webhooks", {
-            "account_id": self._account_id,
-        })
-        if not success:
-            error("Failed to list webhooks: {}".format(response))
-        print("Existing webhooks: ", response)
+        for transaction in imgtransactions:
+            receipt = monzotools.genReceipt(transaction, [("Test item", 1, 200)])
+            client.add_receipt_data(transaction, receipt)
 
-        print("Registering a webhook with callback URL {} ...".format(incoming_endpoint))
-        success, response = self._api_client.api_post("webhooks", {
-            "account_id": self._account_id,
-            "url": incoming_endpoint,
-        })
-        if not success or "webhook" not in response:
-            error("Failed to register webhook: {}".format(response))
-        print("Successfully registered webhooks ", response)
 
-        return response["webhook"]["id"]
+    #For replacing the contents of a receipt with nothing useful (Demo purposes only)
+    def add_junk_data_receipt(self, transaction):
+        receipt = monzotools.genReceipt(transaction, [("Junk Item", 99, 1)])
+        client.add_receipt_data(transaction, receipt)
         
+
+
+
+
 
 if __name__ == "__main__":
     client = ReceiptsClient()
     client.do_auth()
-    client.list_transactions()
-    receipt_id = client.example_add_receipt_data()
-    client.read_receipt(receipt_id)
-    client.example_register_webhook("https://example.com/webhook_callback") 
-    # The webhook endpoint used should be an HTTP-style server served by your own app server.
+    client.list_transactions()    
+    client.add_data_image_receipts(client.transactions)
 
     
     
