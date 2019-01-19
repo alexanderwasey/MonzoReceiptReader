@@ -27,3 +27,8 @@ def transactionsWithImages(transactions):
 def printURLS(transactions):
     for transaction in transactions:
             print(getImageURL(transaction))
+
+def genPayment(transaction):
+    #Generates payment info based on a transaction
+    payment = receipt_types.Payment("card", "", "", "", "", "", "", "", abs(transaction["amount"]), "GBP")
+    return payment

@@ -119,8 +119,7 @@ class ReceiptsClient:
         if abs(most_recent_matched_transaction["amount"]) > 269:
             example_items.append(receipt_types.Item("Excess fare", 1, "", abs(most_recent_matched_transaction["amount"]) 
             - 269, "GBP", 20, []))
-        example_payments = [receipt_types.Payment("card", "123321", "1234", "A10B2C", "", "", "", "", 
-            abs(most_recent_matched_transaction["amount"]), "GBP")]
+        example_payments = [monzotools.genPayment(most_recent_matched_transaction)]
         example_taxes = [receipt_types.Tax("VAT", 0, "GBP", "12345678")]
         
         example_receipt = receipt_types.Receipt("", receipt_id, most_recent_matched_transaction["id"], 
