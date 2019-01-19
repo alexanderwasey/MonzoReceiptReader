@@ -103,28 +103,13 @@ class ReceiptsClient:
         imgtransactions = monzotools.transactionsWithImages(transactions)
 
         for transaction in imgtransactions:
-            receipt_id = monzotools.genReceiptID(transaction)
-
-            #STARTOFTESTDATA
-            items = [monzotools.genItem("Testing testing", 1, 200)]
-            #ENDOFTESTDATA
-            
-            payments = [monzotools.genPayment(transaction)]
-            receipt = receipt_types.Receipt("", receipt_id, transaction["id"], 
-            abs(transaction["amount"]), "GBP", payments, [], items)
-            
+            receipt = monzotools.genReceipt(transaction, [("Test item", 1, 200)])
             client.add_receipt_data(transaction, receipt)
 
 
     #For replacing the contents of a receipt with nothing useful (Demo purposes only)
     def add_junk_data_receipt(self, transaction):
-        receipt_id = monzotools.genReceiptID(transaction)
-        items = [monzotools.genItem("Junk Data", 99, 1)]
-        payments = [monzotools.genPayment(transaction)]
-
-        receipt = receipt_types.Receipt("", receipt_id, transaction["id"], 
-        abs(transaction["amount"]), "GBP", payments, [], items)
-            
+        receipt = monzotools.genReceipt(transaction, [("Junk Item", 99, 1)])
         client.add_receipt_data(transaction, receipt)
         
 
@@ -136,7 +121,7 @@ if __name__ == "__main__":
     client = ReceiptsClient()
     client.do_auth()
     client.list_transactions()    
-    client.add_junk_data_receipt(client.transactions[-1])
+    client.add_data_image_receipts(client.transactions)
 
     
     
