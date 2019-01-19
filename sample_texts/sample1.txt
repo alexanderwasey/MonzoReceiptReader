@@ -4,7 +4,7 @@ express
 
 any
 
-CAUSEWAYSIDE EDINBURGH EXP
+CAUclSEWAYSIDE EDINBURGH EXP
 
 questions please visit
 
@@ -36,7 +36,7 @@ E1 . 30
 
 SALAD TOMATOES
 
-CO . 69
+C0 . 69
 
 TONIC WATER
 
@@ -48,23 +48,22 @@ SUB-TOTAL
 
 $8 . 72
 
-MULTIBUY SAVINGS
 
 VEGETABLES 2 FOR $1
 
--0.20
+$-0.20
 
 DIPS 2 FOR $2
 
--0.60
+$-0.60
 
 TOTAL SAVINGS
 
--0.80
+$-0.80
 
 TOTAL TO PAY
 
-7.92
+$7.92
 
 Visa Debit SALE
 
