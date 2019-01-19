@@ -5,37 +5,16 @@ import sys
 
 import requests
 
-import urllib.request
-
 import config
 import oauth2
 import receipt_types
+from monzotools import *
 from utils import error
 
 class ReceiptsClient:
     ''' An example single-account client of the Monzo Transaction Receipts API. 
         For the underlying OAuth2 implementation, see oauth2.OAuth2Client.
     '''
-
-    def getImageURL(self, transaction):
-        #Get attachments of file
-        attachments = transaction["attachments"]
-        if (len(attachments) == 0):
-            return None
-        else: 
-            return attachments[0]["file_url"]
-
-    def transactionsWithImages(self, transactions):
-        validTransactions = list()
-        for transaction in transactions:
-            if (len(transaction["attachments"]) > 0):
-                validTransactions.append(transaction)
-        return validTransactions
-
-    def printURLS(self, transactions):
-        for transaction in transactions:
-            print(self.getImageURL(transaction))
-
 
     def __init__(self):
         self._api_client = oauth2.OAuth2Client()
@@ -119,7 +98,7 @@ class ReceiptsClient:
         if len(self.transactions) == 0:
             error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
 
-        self.printURLS(self.transactionsWithImages(self.transactions))
+        printURLS(transactionsWithImages(self.transactions))
 
 
         most_recent_matched_transaction = self.transactions[-1]
