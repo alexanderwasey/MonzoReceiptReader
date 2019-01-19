@@ -8,6 +8,7 @@ import oauth2
 import receipt_types
 from utils import error
 
+#Various util functions for dealing with Monzo
 
 def getImageURL(transaction):
     #Get attachments of file
@@ -29,7 +30,7 @@ def printURLS(transactions):
             print(getImageURL(transaction))
 
 def genPayment(transaction):
-    #Generates payment info based on a transaction
+    #Generates payment info based on a transaction, presuming entire transaction done on card
     payment = receipt_types.Payment("card", "", "", "", "", "", "", "", abs(transaction["amount"]), "GBP")
     return payment
 

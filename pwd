@@ -88,7 +88,6 @@ class ReceiptsClient:
         
         print("Receipt read: {}".format(response))
 
-    
     def add_receipt_data(self, transaction, receipt):
         receipt_marshaled = receipt.marshal()
         receipt_id = monzotools.genReceiptID(transaction)
@@ -112,7 +111,20 @@ class ReceiptsClient:
         receipt = monzotools.genReceipt(transaction, [("Junk Item", 99, 1)])
         client.add_receipt_data(transaction, receipt)
         
+    def getTransactionMerchant(self, transaction):
+        transactionid = transaction["id"]
+        
+        success, response = client._api_client.api_get(("transactions/" + transactionid), {
+            "expand[]": "merchant",
+        }) 
 
+        if not success or "transaction" not in response:
+            error("Could not get past transaction ({})".format(response))  
+        try:
+            name = response["transaction"]["merchant"]["name"]
+            return name
+        except: 
+            return "NONE"
 
 
 
@@ -121,10 +133,9 @@ if __name__ == "__main__":
     client = ReceiptsClient()
     client.do_auth()
     client.list_transactions()    
-    client.add_data_image_receipts(client.transactions)
-
     
-    
+    for transaction in client.transactions: 
+        print(client.getTransactionMerchant(transaction))    
             
         
     
