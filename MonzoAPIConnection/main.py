@@ -25,6 +25,16 @@ class ReceiptsClient:
         else: 
             return attachments[0]["file_url"]
 
+    def transactionsWithImages(self, transactions):
+        validTransactions = list()
+        for transaction in transactions:
+            if (len(transaction["attachments"]) > 0):
+                validTransactions.append(transaction)
+        return validTransactions
+
+    def printURLS(self, transactions):
+        for transaction in transactions:
+            print(self.getImageURL(transaction))
 
 
     def __init__(self):
@@ -109,14 +119,10 @@ class ReceiptsClient:
         if len(self.transactions) == 0:
             error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
 
+        self.printURLS(self.transactionsWithImages(self.transactions))
+
+
         most_recent_matched_transaction = self.transactions[-1]
-
-
-
-
-
-        url = self.getImageURL(most_recent_matched_transaction)
-        urllib.request.urlretrieve(url, "testimage.jpg")
 
         if (most_recent_matched_transaction is None):
             error("No transaction found with matching price")
