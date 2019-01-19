@@ -7,7 +7,7 @@ from PIL import Image
 from io import BytesIO
 
 # Replace <Subscription Key> with your valid subscription key.
-subscription_key = "<Subscription Key>"
+subscription_key = "fbcc02faa1f04500b4275e49fba6bd62"
 assert subscription_key
 
 # You must use the same region in your REST call as you used to get your
@@ -41,6 +41,18 @@ for line in line_infos:
         for word_info in word_metadata["words"]:
             word_infos.append(word_info)
 word_infos
+print(word_infos)
+
+# open the output file for writing
+dataFile = open('writetest.txt', 'w')
+
+# loop through each item in the list
+# and write it to the output file
+for eachitem in word_infos:
+    dataFile.write(str(eachitem["text"])+'\n')
+
+# close the output file
+dataFile.close()
 
 # Display the image and overlay it with the extracted text.
 plt.figure(figsize=(5, 5))
@@ -54,3 +66,4 @@ for word in word_infos:
     ax.axes.add_patch(patch)
     plt.text(origin[0], origin[1], text, fontsize=20, weight="bold", va="top")
 plt.axis("off")
+plt.show()
