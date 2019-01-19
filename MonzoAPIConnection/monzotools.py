@@ -37,3 +37,5 @@ def genItem(description, quantity, price):
         item = receipt_types.Item(description, quantity, "", price, "GBP", 0, list() )
         return item
 
+def genReceiptID(transaction):
+        return transaction["id"] + "ID"
