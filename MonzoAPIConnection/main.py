@@ -89,39 +89,6 @@ class ReceiptsClient:
         print("Receipt read: {}".format(response))
 
     
-    def example_add_receipt_data(self):
-        ''' An example in which we add receipt data to the latest transaction 
-            of the account, with fabricated information. You can set varying 
-            receipts data on the same transaction again and again to test it 
-            if you need to. 
-        '''
-        if len(self.transactions) == 0:
-            error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
-
-        most_recent_matched_transaction = self.transactions[len(self.transactions)-5]
-
-        print("Using most recent transaction to attach receipt: {}".format(most_recent_matched_transaction))
-        
-        receipt_id = "receipt_1"
-
-        # Price amounts are in the number of pences.
-        example_items = [monzotools.genItem("Testing testing", 2, 310)]
-        example_payments = [monzotools.genPayment(most_recent_matched_transaction)]
-        
-        example_receipt = receipt_types.Receipt("", receipt_id, most_recent_matched_transaction["id"], 
-            abs(most_recent_matched_transaction["amount"]), "GBP", example_payments, [], example_items)
-        example_receipt_marshaled = example_receipt.marshal()
-        print("Uploading receipt data to API: ", json.dumps(example_receipt_marshaled, indent=4, sort_keys=True))
-        print("")
-        
-        success, response = self._api_client.api_put("transaction-receipts/", example_receipt_marshaled)
-        if not success:
-            error("Failed to upload receipt: {}".format(response))
-
-        print("Successfully uploaded receipt {}: {}".format(receipt_id, response))
-        return receipt_id
-
-    
     def add_receipt_data(self, transaction, receipt):
         receipt_marshaled = receipt.marshal()
 
