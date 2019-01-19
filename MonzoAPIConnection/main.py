@@ -5,6 +5,8 @@ import sys
 
 import requests
 
+import urllib.request
+
 import config
 import oauth2
 import receipt_types
@@ -15,17 +17,13 @@ class ReceiptsClient:
         For the underlying OAuth2 implementation, see oauth2.OAuth2Client.
     '''
 
-    def getCorrectReceipt(self, price, transactions):
-        
-        
-        '''Based on reversed transactions, in order to get most recent first'''
-        for transaction in reversed(transactions): 
-            if (transaction["amount"] == price): 
-                return transaction
-        return None
-
-
-
+    def getImageURL(self, transaction):
+        #Get attachments of file
+        attachments = transaction["attachments"]
+        if (len(attachments) == 0):
+            return None
+        else: 
+            return attachments[0]["file_url"]
 
 
 
@@ -102,7 +100,7 @@ class ReceiptsClient:
         print("Receipt read: {}".format(response))
 
     
-    def example_add_receipt_data(self, price):
+    def example_add_receipt_data(self):
         ''' An example in which we add receipt data to the latest transaction 
             of the account, with fabricated information. You can set varying 
             receipts data on the same transaction again and again to test it 
@@ -111,7 +109,14 @@ class ReceiptsClient:
         if len(self.transactions) == 0:
             error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
 
-        most_recent_matched_transaction = self.getCorrectReceipt(price, self.transactions)
+        most_recent_matched_transaction = self.transactions[-1]
+
+
+
+
+
+        url = self.getImageURL(most_recent_matched_transaction)
+        urllib.request.urlretrieve(url, "testimage.jpg")
 
         if (most_recent_matched_transaction is None):
             error("No transaction found with matching price")
@@ -177,11 +182,10 @@ class ReceiptsClient:
         
 
 if __name__ == "__main__":
-    price = int(sys.argv[1])
     client = ReceiptsClient()
     client.do_auth()
     client.list_transactions()
-    receipt_id = client.example_add_receipt_data(price)
+    receipt_id = client.example_add_receipt_data()
     client.read_receipt(receipt_id)
     client.example_register_webhook("https://example.com/webhook_callback") 
     # The webhook endpoint used should be an HTTP-style server served by your own app server.
