@@ -1,6 +1,8 @@
 import json
 import uuid
 
+import sys
+
 import requests
 
 import config
@@ -12,6 +14,20 @@ class ReceiptsClient:
     ''' An example single-account client of the Monzo Transaction Receipts API. 
         For the underlying OAuth2 implementation, see oauth2.OAuth2Client.
     '''
+
+    def getCorrectReceipt(self, price, transactions):
+        
+        
+        '''Based on reversed transactions, in order to get most recent first'''
+        for transaction in reversed(transactions): 
+            if (transaction["amount"] == price): 
+                return transaction
+        return None
+
+
+
+
+
 
     def __init__(self):
         self._api_client = oauth2.OAuth2Client()
@@ -86,7 +102,7 @@ class ReceiptsClient:
         print("Receipt read: {}".format(response))
 
     
-    def example_add_receipt_data(self):
+    def example_add_receipt_data(self, price):
         ''' An example in which we add receipt data to the latest transaction 
             of the account, with fabricated information. You can set varying 
             receipts data on the same transaction again and again to test it 
@@ -95,8 +111,12 @@ class ReceiptsClient:
         if len(self.transactions) == 0:
             error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
 
-        most_recent_transaction = self.transactions[-1]
-        print("Using most recent transaction to attach receipt: {}".format(most_recent_transaction))
+        most_recent_matched_transaction = self.getCorrectReceipt(price, self.transactions)
+
+        if (most_recent_matched_transaction is None):
+            error("No transaction found with matching price")
+
+        print("Using most recent transaction to attach receipt: {}".format(most_recent_matched_transaction))
 
         # Using a random receipt ID we generate as external ID
         receipt_id = uuid.uuid4().hex
@@ -106,15 +126,15 @@ class ReceiptsClient:
         example_sub_item_2 = receipt_types.SubItem("Organic bananas", 1, "kg", 150, "GBP", 0)
         example_items = [receipt_types.Item("Selected bananas", 2.5, "kg", 269, "GBP", 0, [example_sub_item_1,
             example_sub_item_2])]
-        if abs(most_recent_transaction["amount"]) > 269:
-            example_items.append(receipt_types.Item("Excess fare", 1, "", abs(most_recent_transaction["amount"]) 
+        if abs(most_recent_matched_transaction["amount"]) > 269:
+            example_items.append(receipt_types.Item("Excess fare", 1, "", abs(most_recent_matched_transaction["amount"]) 
             - 269, "GBP", 20, []))
         example_payments = [receipt_types.Payment("card", "123321", "1234", "A10B2C", "", "", "", "", 
-            abs(most_recent_transaction["amount"]), "GBP")]
+            abs(most_recent_matched_transaction["amount"]), "GBP")]
         example_taxes = [receipt_types.Tax("VAT", 0, "GBP", "12345678")]
         
-        example_receipt = receipt_types.Receipt("", receipt_id, most_recent_transaction["id"], 
-            abs(most_recent_transaction["amount"]), "GBP", example_payments, example_taxes, example_items)
+        example_receipt = receipt_types.Receipt("", receipt_id, most_recent_matched_transaction["id"], 
+            abs(most_recent_matched_transaction["amount"]), "GBP", example_payments, example_taxes, example_items)
         example_receipt_marshaled = example_receipt.marshal()
         print("Uploading receipt data to API: ", json.dumps(example_receipt_marshaled, indent=4, sort_keys=True))
         print("")
@@ -157,11 +177,11 @@ class ReceiptsClient:
         
 
 if __name__ == "__main__":
+    price = int(sys.argv[1])
     client = ReceiptsClient()
     client.do_auth()
     client.list_transactions()
-    print(client.transactions[-1])
-    receipt_id = client.example_add_receipt_data()
+    receipt_id = client.example_add_receipt_data(price)
     client.read_receipt(receipt_id)
     client.example_register_webhook("https://example.com/webhook_callback") 
     # The webhook endpoint used should be an HTTP-style server served by your own app server.
