@@ -91,31 +91,36 @@ class ReceiptsClient:
     
     def add_receipt_data(self, transaction, receipt):
         receipt_marshaled = receipt.marshal()
+        receipt_id = transaction["id"] + "ID"
 
         success, response = self._api_client.api_put("transaction-receipts/", receipt_marshaled)
         if not success:
             error("Failed to upload receipt: {}".format(response))
         print("Successfully uploaded receipt {}: {}".format(receipt_id, response))
-        return receipt_id
+
+    #Need to update with proper data source, but once we can do that should be good
+    def add_data_image_receipts(self, transactions):
+        imgtransactions = monzotools.transactionsWithImages(transactions)
+
+        for transaction in imgtransactions:
+            receipt_id = transaction["id"] + "ID"
+
+            #TESTTESTTEST
+            example_items = [monzotools.genItem("Testing testing", 1, 200)]
+            payments = [monzotools.genPayment(transaction)]
+            receipt = receipt_types.Receipt("", receipt_id, transaction["id"], 
+            abs(transaction["amount"]), "GBP", payments, [], example_items)
+            client.add_receipt_data(transaction, receipt)
+            
+
 
 
 
 if __name__ == "__main__":
     client = ReceiptsClient()
     client.do_auth()
-    client.list_transactions()
-    transaction = client.transactions[len(client.transactions) - 5]
-    
-    receipt_id = "receipt_1"
-
-    example_items = [monzotools.genItem("Testing testing", 1, 620)]
-    example_payments = [monzotools.genPayment(transaction)]
-    example_receipt = receipt_types.Receipt("", receipt_id, transaction["id"], 
-            abs(transaction["amount"]), "GBP", example_payments, [], example_items)
-    
-    receipt_id = client.add_receipt_data(transaction, example_receipt)
-
-    client.read_receipt(receipt_id)
+    client.list_transactions()    
+    client.add_data_image_receipts(client.transactions)
 
     
     
