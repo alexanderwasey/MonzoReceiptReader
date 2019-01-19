@@ -8,7 +8,7 @@ import requests
 import config
 import oauth2
 import receipt_types
-from monzotools import *
+import monzotools 
 from utils import error
 
 class ReceiptsClient:
@@ -98,7 +98,7 @@ class ReceiptsClient:
         if len(self.transactions) == 0:
             error("No transactions found, either it was not loaded with list_transactions() or there's no transaction in the Monzo account :/")
 
-        printURLS(transactionsWithImages(self.transactions))
+        monzotools.printURLS(monzotools.transactionsWithImages(self.transactions))
 
 
         most_recent_matched_transaction = self.transactions[-1]
