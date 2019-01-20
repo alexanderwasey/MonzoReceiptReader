@@ -109,7 +109,7 @@ class ReceiptsClient:
     #For replacing the contents of a receipt with nothing useful (Demo purposes only)
     def add_junk_data_receipt(self, transaction):
         receipt = monzotools.genReceipt(transaction, [("Junk Item", 99, 1)])
-        client.add_receipt_data(transaction, receipt)
+        self.add_receipt_data(transaction, receipt)
         
     def getTransactionMerchant(self, transaction):
         transactionid = transaction["id"]
