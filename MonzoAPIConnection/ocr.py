@@ -54,7 +54,3 @@ def image_to_text(url):
     conn2.close()
     conn.close()
     return text
-
-# call function
-parsed_image = image_to_text("https://i.imgur.com/h8yyhst.jpg")
-print(parsed_image)
