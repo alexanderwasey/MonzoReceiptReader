@@ -15,12 +15,11 @@ def parsereceipt(text_dump):
                 pos = line_no_space.find('.')
                 #Note: OCR sometimes reads 0's as an 'O', thus we account for this case in distinguishing whether a line is the price.
                 if ((line_no_space[pos-1].isdigit()) or line_no_space[pos-1].upper() == 'O') and (line_no_space[pos+1].isdigit() or line_no_space[pos+1].upper() == 'O'):
-                    list_of_lines.append(line_no_space[:-1])
+                    list_of_lines.append(line_no_space)
                 else:
                     list_of_lines.append(line.strip())
             else:
                 list_of_lines.append(line.strip())
-
     #We want to find the first price tag and limit the lines that we store to the start of the individual items (the line before the first price contains the title of the first item)
     flag = -1
     for line in list_of_lines:
@@ -31,7 +30,6 @@ def parsereceipt(text_dump):
         flag = flag + 1
     #We now create the items_list which is the only starts
     items_list = list_of_lines[flag:]
-
     #We now look for the where the listing of the individual items ends. This will usually be indicated by a TOTAL or BALANCE item.
     #We look for the last occurence of TOTAL or BALANCE (sometimes we can have Subtotals, so we look for the final occurence)
     i = 0
