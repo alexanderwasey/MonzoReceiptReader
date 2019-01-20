@@ -18,6 +18,13 @@ def getImageURL(transaction):
     else: 
         return attachments[0]["file_url"]
 
+def getImageID(transaction):
+        attachments = transaction["attachments"]
+        if (len(attachments) == 0):
+                return None
+        else: 
+                return attachments[0]["id"]      
+
 def transactionsWithImages(transactions):
     validTransactions = list()
     for transaction in transactions:
