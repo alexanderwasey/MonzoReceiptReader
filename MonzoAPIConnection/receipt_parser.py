@@ -72,3 +72,11 @@ def parsereceipt(text_dump):
         output_tuples.append((temp_desc, 1, temp_price))
     output_tuples.reverse()
     return output_tuples
+
+#Finds VAT number is one exists
+def findVAT(text_dump):
+    for line in text_dump:
+        if "Vat" in line: 
+            pos = line.find(':')
+            return line[(pos + 2):]
+    return None

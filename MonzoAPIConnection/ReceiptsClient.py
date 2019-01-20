@@ -97,24 +97,16 @@ class ReceiptsClient:
             error("Failed to upload receipt: {}".format(response))
         print("Successfully uploaded receipt {}: {}".format(receipt_id, response))
 
-    #Need to update with proper data source, but once we can do that should be good
-    def add_data_image_receipts(self, transactions):
-        imgtransactions = monzotools.transactionsWithImages(transactions)
-
-        for transaction in imgtransactions:
-            receipt = monzotools.genReceipt(transaction, [("Test item", 1, 200)])
-            client.add_receipt_data(transaction, receipt)
-
 
     #For replacing the contents of a receipt with nothing useful (Demo purposes only)
     def add_junk_data_receipt(self, transaction):
-        receipt = monzotools.genReceipt(transaction, [("Junk Item", 99, 1)])
+        receipt = monzotools.genReceipt(transaction, [], [("Junk Item", 99, 1)])
         self.add_receipt_data(transaction, receipt)
         
     def getTransactionMerchant(self, transaction):
         transactionid = transaction["id"]
         
-        success, response = client._api_client.api_get(("transactions/" + transactionid), {
+        success, response = self._api_client.api_get(("transactions/" + transactionid), {
             "expand[]": "merchant",
         }) 
 

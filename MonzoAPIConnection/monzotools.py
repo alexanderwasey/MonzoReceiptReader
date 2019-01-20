@@ -43,9 +43,10 @@ def genReceiptID(transaction):
         return transaction["id"] + "ID"
 
 #Each item is a tuple of description, quantity, price
-def genReceipt(transaction, items):
+def genReceipt(transaction, taxes, items):
         receipt_id = genReceiptID(transaction)
         payments = [genPayment(transaction)]
+
 
         #Gen items in json format
         jsonitems = []
@@ -53,6 +54,6 @@ def genReceipt(transaction, items):
                 jsonitems.append(genItem(item[0], item[1], item[2]))
         
         receipt = receipt_types.Receipt("", receipt_id, transaction["id"], 
-        abs(transaction["amount"]), "GBP", payments, [], jsonitems)
+        abs(transaction["amount"]), "GBP", payments, taxes, jsonitems)
 
         return receipt
