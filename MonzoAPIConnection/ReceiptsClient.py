@@ -124,18 +124,4 @@ class ReceiptsClient:
             name = response["transaction"]["merchant"]["name"]
             return name
         except: 
-            return "NONE"
-
-
-
-
-if __name__ == "__main__":
-    client = ReceiptsClient()
-    client.do_auth()
-    client.list_transactions()    
-    
-    for transaction in client.transactions: 
-        print(client.getTransactionMerchant(transaction))    
-            
-        
-    
+            return "NONE"    
