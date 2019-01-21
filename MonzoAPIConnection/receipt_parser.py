@@ -64,8 +64,9 @@ def parsereceipt(text_dump):
     for i in range((len(items_list)//2)):
         temp_price_string = items_list.pop()[1:]
         pos = line.find('.')
-        pounds = int(temp_price_string[:pos-1])
-        pence = int(temp_price_string[pos:])
+        #Update: re.sub added to account for possible misreads and non-digit chars
+        pounds = int(re.sub("[^0-9]", "", temp_price_string[:pos-1]))
+        pence = int(re.sub("[^0-9]", "", temp_price_string[pos:]))        
         #Calculating the price in pence.
         temp_price = 100*pounds + pence
         temp_desc = items_list.pop()
